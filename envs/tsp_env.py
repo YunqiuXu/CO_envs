@@ -11,18 +11,18 @@ class TSPProblem(object):
         self.seed = seed
 
 
-    def generate_tsp_data(self, batch_size=1):
+    def generate_batch_data(self, batch_size=1):
         """
         Generate a batch of tsp data: numpy.float64, (batch_size, graph_size, 2)
         """
         return np.random.uniform(size=(batch_size, self.graph_size, 2))
 
 
-    def generate_test_dataset(self, dataset_size=1000, foldername="xyq_test_dataset/"):
+    def generate_test_dataset(self, dataset_size=1000, foldername="test_dataset/"):
         filename = "{}tsp{}_{}_seed{}.pkl".format(foldername, self.graph_size, dataset_size, self.seed)
         print("Generate test dataset at: {}".format(filename))
         np.random.seed(self.seed)
-        dataset = self.generate_tsp_data(dataset_size)
+        dataset = self.generate_batch_data(dataset_size)
         with open(filename, 'wb') as f:
             pickle.dump(dataset, f, pickle.HIGHEST_PROTOCOL)
         return filename
@@ -53,7 +53,7 @@ class TSPProblem(object):
         return cost_part1 + cost_part2
 
 
-    def plot_tsp(self, inputs, selected_idxs, savepath=None):
+    def plot(self, inputs, selected_idxs, savepath=None):
         """
         https://github.com/wouterkool/attention-learn-to-route/blob/master/simple_tsp.ipynb
         savepath = "xyq_vis/tsp20_fig.png"
@@ -82,18 +82,4 @@ class TSPProblem(object):
         if savepath is not None:
             plt.savefig(savepath)
         plt.show()
-
-
-if __name__ == "__main__":
-    graph_size = 20
-    seed = 9527
-    tsp_env = TSPProblem(graph_size, seed)
-    # generate a dataset
-    filename = tsp_env.generate_test_dataset(dataset_size=1000)
-    # load dataset
-    test_dataset = tsp_env.load_test_dataset(filename)
-    print(test_dataset.shape)
-    # generate a batch
-    batch = tsp_env.generate_tsp_data(batch_size=37)
-    print(batch.shape)
 

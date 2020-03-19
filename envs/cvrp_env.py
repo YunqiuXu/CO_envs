@@ -15,7 +15,7 @@ class CVRPProblem(object):
         self.capacity_size = self.capacity_dict[self.graph_size]
         self.seed = seed
 
-    def generate_vrp_data(self, batch_size=1):
+    def generate_batch_data(self, batch_size=1):
         """
         Generate a batch of vrp data: {depot, loc, demand}
         
@@ -32,7 +32,7 @@ class CVRPProblem(object):
                 }
 
 
-    def generate_test_dataset(self, dataset_size=1000, foldername="xyq_test_dataset/"):
+    def generate_test_dataset(self, dataset_size=1000, foldername="test_dataset/"):
         """
         During testing, you can only run with batch_size 1!
         The dataset is a list containing dataset_size samples, each is with batch_size 1
@@ -42,7 +42,7 @@ class CVRPProblem(object):
         np.random.seed(self.seed)
         dataset = []
         for i in range(dataset_size):
-            curr_data = self.generate_vrp_data(batch_size=1)
+            curr_data = self.generate_batch_data(batch_size=1)
             dataset.append(curr_data)
         with open(filename, 'wb') as f:
             pickle.dump(dataset, f, pickle.HIGHEST_PROTOCOL)
@@ -93,7 +93,7 @@ class CVRPProblem(object):
         return cost_part1 + cost_part2 + cost_part3
 
 
-    def plot_cvrp(self, inputs, selected_idxs, 
+    def plot(self, inputs, selected_idxs, 
                     round_demand=False, 
                     visualize_demands=False, 
                     savepath=None):
@@ -166,7 +166,7 @@ class CVRPProblem(object):
                             label='R{}, # {}, c {} / {}, d {:.2f}'.format(
                                 veh_number, 
                                 len(r), 
-                                int(total_route_demand) if round_demand else total_route_demand, 
+                                int(total_route_demand * capacity) if round_demand else total_route_demand * capacity, 
                                 int(capacity) if round_demand else capacity,
                                 dist)
                             )
