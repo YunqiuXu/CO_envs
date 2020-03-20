@@ -15,14 +15,17 @@ class TSPProblem(object):
         """
         Generate a batch of tsp data: numpy.float64, (batch_size, graph_size, 2)
         """
-        return np.random.uniform(size=(batch_size, self.graph_size, 2))
+        return {'loc': np.random.uniform(size=(batch_size, self.graph_size, 2))}
 
 
     def generate_test_dataset(self, dataset_size=1000, foldername="test_dataset/"):
         filename = "{}tsp{}_{}_seed{}.pkl".format(foldername, self.graph_size, dataset_size, self.seed)
         print("Generate test dataset at: {}".format(filename))
         np.random.seed(self.seed)
-        dataset = self.generate_batch_data(dataset_size)
+        dataset = []
+        for i in range(dataset_size):
+            curr_data = self.generate_batch_data(batch_size=1)
+            dataset.append(curr_data)
         with open(filename, 'wb') as f:
             pickle.dump(dataset, f, pickle.HIGHEST_PROTOCOL)
         return filename
@@ -35,6 +38,10 @@ class TSPProblem(object):
         assert os.path.splitext(filename)[1] == '.pkl', "Wrong path:{}".format(filename)
         with open(filename, 'rb') as f:
             dataset = pickle.load(f)
+        print("Dataset loaded, it's a length-{}-list. During testing the batch_size is fixed as 1!".format(len(dataset)))
+        print("Sample data:")
+        sample_data = dataset[0]
+        print("loc: {}, {}".format(sample_data['loc'].shape, sample_data['loc'].dtype))
         return dataset
 
 
