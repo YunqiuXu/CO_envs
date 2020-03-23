@@ -51,9 +51,10 @@ class TSPProblem(object):
         :param selected_idxs: a batch of selected idxs, (batch_size, graph_size), np.int
         :output: (batch_size,)
         """
+        loc = inputs['loc']
         # get indexed data
-        batch_size = inputs.shape[0]
-        indexed_data = inputs[np.arange(batch_size)[:,None], selected_idxs]
+        batch_size = loc.shape[0]
+        indexed_data = loc[np.arange(batch_size)[:,None], selected_idxs]
         # compute cost
         cost_part1 = np.linalg.norm(indexed_data[:,1:] - indexed_data[:,:-1], axis=2).sum(1) 
         cost_part2 = np.linalg.norm(indexed_data[:,0] - indexed_data[:,-1], axis=1) # the last node and first node
@@ -65,12 +66,13 @@ class TSPProblem(object):
         https://github.com/wouterkool/attention-learn-to-route/blob/master/simple_tsp.ipynb
         savepath = "xyq_vis/tsp20_fig.png"
         """
-        assert(inputs.shape[0] == 1), "Only one problem"
+        loc = inputs['loc']
+        assert(loc.shape[0] == 1), "Only one problem"
         assert(selected_idxs.shape[0] == 1), "Only one problem"
         # get cost
         cost = self.compute_cost(inputs, selected_idxs)[0]
         # get indexed nodes
-        indexed_data = inputs[np.arange(1)[:,None], selected_idxs] # [1, graph_size, 2]
+        indexed_data = loc[np.arange(1)[:,None], selected_idxs] # [1, graph_size, 2]
         xs = indexed_data[0,:,0]
         ys = indexed_data[0,:,1]
         dx = np.roll(xs, -1) - xs
